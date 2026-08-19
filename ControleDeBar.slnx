@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ControleDeBar.Dominio/ControleDeBar.Dominio.csproj" />
+    <Project Path="src/ControleDeBar.Aplicacao/ControleDeBar.Aplicacao.csproj" />
+    <Project Path="src/ControleDeBar.Infra/ControleDeBar.Infra.csproj" />
+    <Project Path="src/ControleDeBar.WebApp/ControleDeBar.WebApp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ControleDeBar.Testes.E2E/ControleDeBar.Testes.E2E.csproj" />
+    <Project Path="tests/ControleDeBar.Testes.Integracao/ControleDeBar.Testes.Integracao.csproj" />
+    <Project Path="tests/ControleDeBar.Testes.Unidade/ControleDeBar.Testes.Unidade.csproj" />
+  </Folder>
+</Solution>
