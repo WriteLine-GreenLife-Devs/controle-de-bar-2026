@@ -1,5 +1,7 @@
 using ControleDeBar.Infra.Compartilhado.Logging;
 using ControleDeBar.Infra.Compartilhado.Orm;
+using ControleDeBar.Dominio.Modulos.ModuloMesa;
+using ControleDeBar.Infra.Modulos.ModuloMesa;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -63,5 +65,6 @@ public static class InjecaoDeDependencia
         .AddSignInManager() // Configuração do SignInManager
         .AddDefaultTokenProviders();
 
+        services.AddScoped<IRepositorioMesa, RepositorioMesaEmOrm>();
     }
 }
