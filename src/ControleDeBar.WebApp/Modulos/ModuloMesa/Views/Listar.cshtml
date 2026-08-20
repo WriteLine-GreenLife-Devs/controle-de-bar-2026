@@ -14,7 +14,7 @@
 
 @if (Model.Count == 0)
 {
-    <div class="alert alert-primary" role="alert">Nenhuma mesa cadastrada.</div>
+    <div class="alert alert-primary" role="alert" data-testid="mesas-estado-vazio">Nenhuma mesa cadastrada.</div>
 }
 else
 {
@@ -22,11 +22,11 @@ else
         @foreach (ListarMesaViewModel mesa in Model)
         {
             <div class="col">
-                <div class="card h-100">
+                <div class="card h-100" data-testid="mesa-card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <h5 class="card-title">Mesa @mesa.Numero</h5>
-                            <span class="badge @(mesa.Status == StatusMesa.Livre ? "text-bg-success" : "text-bg-warning")">@mesa.Status.GetDisplayName()</span>
+                            <span class="badge @(mesa.Status == StatusMesa.Livre ? "text-bg-success" : "text-bg-warning")" data-testid="mesa-status">@mesa.Status.GetDisplayName()</span>
                         </div>
                         <p class="card-text">@mesa.Lugares lugares</p>
                         <div class="d-flex gap-2 justify-content-end">

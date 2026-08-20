@@ -54,4 +54,15 @@ public abstract class E2ETestsBase : PageTest
             string.Join("; ", resultado.Errors.Select(erro => erro.Description))
         );
     }
+
+    protected async Task RegistrarEEntrarAsync(string email, string senha)
+    {
+        await RegistrarUsuarioAsync(email, senha);
+
+        EntrarPage entrarPage = new(Page, UrlBase);
+
+        await entrarPage.IrParaAsync();
+        await entrarPage.PreencherAsync(email, senha);
+        await entrarPage.ConfirmarAsync();
+    }
 }
