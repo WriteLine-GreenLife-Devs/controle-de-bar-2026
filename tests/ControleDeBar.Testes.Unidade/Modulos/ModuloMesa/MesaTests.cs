@@ -76,6 +76,22 @@ public sealed class MesaTests
     }
 
     [TestMethod]
+    public void Deve_PreservarStatus_AoAtualizarMesa()
+    {
+        // Arrange
+        Mesa mesa = new(5, 4);
+        mesa.Ocupar();
+
+        Mesa mesaAtualizada = new(6, 8);
+
+        // Act
+        mesa.Atualizar(mesaAtualizada);
+
+        // Assert
+        Assert.AreEqual(StatusMesa.Ocupada, mesa.Status);
+    }
+
+    [TestMethod]
     public void Deve_AlterarStatus_QuandoOcuparELiberarMesa()
     {
         // Arrange
