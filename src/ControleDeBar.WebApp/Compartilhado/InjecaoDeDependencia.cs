@@ -34,6 +34,10 @@ public static class InjecaoDeDependencia
         {
             cookieOptions.LoginPath = "/Autenticacao/Entrar";
             cookieOptions.AccessDeniedPath = "/Autenticacao/Entrar";
+            cookieOptions.Cookie.HttpOnly = true;
+            cookieOptions.Cookie.SameSite = SameSiteMode.Lax;
+            cookieOptions.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            cookieOptions.SlidingExpiration = true;
         });
 
         services.AddAuthorization(options =>

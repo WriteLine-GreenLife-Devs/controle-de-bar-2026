@@ -20,6 +20,7 @@ public sealed class AutenticacaoController(
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult> Registrar(RegistrarViewModel viewModel)
     {
         if (signInManager.IsSignedIn(User))
@@ -28,11 +29,13 @@ public sealed class AutenticacaoController(
         if (!ModelState.IsValid)
             return View(viewModel);
 
+        string email = viewModel.Email.Trim();
+
         IdentityUser<Guid> user = new IdentityUser<Guid>()
         {
             Id = Guid.CreateVersion7(),
-            UserName = viewModel.Email,
-            Email = viewModel.Email
+            UserName = email,
+            Email = email
         };
 
         IdentityResult resultado = await userManager.CreateAsync(user, viewModel.Senha);
@@ -56,12 +59,11 @@ public sealed class AutenticacaoController(
         if (signInManager.IsSignedIn(User))
             return RedirectToAction("Index", "Home");
 
-        ViewBag.ReturnUrl = returnUrl;
-
-        return View();
+        return View(new EntrarViewModel { ReturnUrl = returnUrl });
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult> Entrar(EntrarViewModel viewModel)
     {
         if (signInManager.IsSignedIn(User))
@@ -71,7 +73,7 @@ public sealed class AutenticacaoController(
             return View(viewModel);
 
         Microsoft.AspNetCore.Identity.SignInResult resultado = await signInManager.PasswordSignInAsync(
-            viewModel.Email,
+            viewModel.Email.Trim(),
             viewModel.Senha,
             viewModel.LembrarMe,
             lockoutOnFailure: true
@@ -100,6 +102,7 @@ public sealed class AutenticacaoController(
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult> Sair()
     {
         await signInManager.SignOutAsync();
