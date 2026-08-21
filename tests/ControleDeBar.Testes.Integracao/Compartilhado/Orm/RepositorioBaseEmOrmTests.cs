@@ -1,4 +1,5 @@
 using ControleDeBar.Infra.Compartilhado.Orm;
+using ControleDeBar.Infra.Modulos.ModuloGarcom;
 using ControleDeBar.Infra.Modulos.ModuloMesa;
 using ControleDeBar.Testes.Integracao.Compartilhado.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ public abstract class RepositorioBaseEmOrmTests
 
     protected Guid userId;
     protected ControleDeBarDbContext dbContext = null!;
+    protected RepositorioGarcomEmOrm repositorioGarcom = null!;
     protected RepositorioMesaEmOrm repositorioMesa = null!;
 
     [TestInitialize]
@@ -23,6 +25,7 @@ public abstract class RepositorioBaseEmOrmTests
         userId = Guid.CreateVersion7();
 
         dbContext = CriarDbContext(userId);
+        repositorioGarcom = new RepositorioGarcomEmOrm(dbContext);
         repositorioMesa = new RepositorioMesaEmOrm(dbContext);
     }
 
