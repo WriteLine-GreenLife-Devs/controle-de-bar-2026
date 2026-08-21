@@ -1,0 +1,45 @@
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Garçons";
+}
+
+@model List<ListarGarcomViewModel>;
+
+<a class="btn btn-outline-primary rounded-pill px-4 mb-3" asp-action="Cadastrar">Cadastrar Garçom</a>
+
+@if (TempData["MensagemErro"] is string mensagemErro)
+{
+    <div class="alert alert-danger" role="alert">@mensagemErro</div>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-primary" role="alert" data-testid="garcons-estado-vazio">Nenhum garçom cadastrado.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ListarGarcomViewModel garcom in Model)
+                {
+                    <tr data-testid="garcom-linha">
+                        <td>@garcom.Nome</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Editar" asp-route-id="@garcom.Id">Editar</a>
+                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Excluir" asp-route-id="@garcom.Id">Excluir</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

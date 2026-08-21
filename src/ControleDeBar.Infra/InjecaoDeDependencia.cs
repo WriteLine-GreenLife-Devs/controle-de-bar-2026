@@ -1,6 +1,8 @@
 using ControleDeBar.Infra.Compartilhado.Logging;
 using ControleDeBar.Infra.Compartilhado.Orm;
+using ControleDeBar.Dominio.Modulos.ModuloGarcom;
 using ControleDeBar.Dominio.Modulos.ModuloMesa;
+using ControleDeBar.Infra.Modulos.ModuloGarcom;
 using ControleDeBar.Infra.Modulos.ModuloMesa;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +67,7 @@ public static class InjecaoDeDependencia
         .AddSignInManager() // Configuração do SignInManager
         .AddDefaultTokenProviders();
 
+        services.AddScoped<IRepositorioGarcom, RepositorioGarcomEmOrm>();
         services.AddScoped<IRepositorioMesa, RepositorioMesaEmOrm>();
     }
 }

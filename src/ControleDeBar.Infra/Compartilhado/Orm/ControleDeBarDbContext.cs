@@ -1,5 +1,6 @@
 using System.Reflection;
 using ControleDeBar.Dominio.Compartilhado.Identity;
+using ControleDeBar.Dominio.Modulos.ModuloGarcom;
 using ControleDeBar.Dominio.Modulos.ModuloMesa;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -12,6 +13,7 @@ public sealed class ControleDeBarDbContext(
     IProvedorDeUsuario? userProvider = null
 ) : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>(options)
 {
+    public DbSet<Garcom> Garcons => Set<Garcom>();
     public DbSet<Mesa> Mesas => Set<Mesa>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,6 +26,9 @@ public sealed class ControleDeBarDbContext(
 
         if (userProvider is not null)
         {
+            modelBuilder.Entity<Garcom>()
+                .HasQueryFilter(g => g.UserId == userProvider.Id);
+
             modelBuilder.Entity<Mesa>()
                 .HasQueryFilter(m => m.UserId == userProvider.Id);
         }
