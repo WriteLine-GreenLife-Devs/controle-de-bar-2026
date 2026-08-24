@@ -5,6 +5,10 @@
 </p>
 
 <p align="center">
+  <img src="referencias/demonstracao-controle-de-bar.gif" alt="Demonstração do Controle de Bar">
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" alt=".NET 10">
   <img src="https://img.shields.io/badge/ASP.NET_Core-MVC-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" alt="ASP.NET Core MVC">
   <img src="https://img.shields.io/badge/Entity_Framework_Core-10.0.9-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" alt="Entity Framework Core">

@@ -48,6 +48,7 @@ RequestLocalizationOptions localizacaoPortuguesBrasil = new()
 };
 
 app.UseRequestLocalization(localizacaoPortuguesBrasil);
+app.UseStaticFiles();
 app.UseRouting();
 
 // Middlewares de Auth
