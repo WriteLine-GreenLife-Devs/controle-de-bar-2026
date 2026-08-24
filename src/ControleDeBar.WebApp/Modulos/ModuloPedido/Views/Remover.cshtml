@@ -1,0 +1,50 @@
+@using ControleDeBar.WebApp.Modulos.ModuloPedido
+
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Remover Pedido";
+}
+
+@model RemoverPedidoViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4"
+      style="max-width: 620px;"
+      asp-action="Remover"
+      method="post">
+
+    <input asp-for="Id" type="hidden">
+    <input asp-for="ContaId" type="hidden">
+
+    <div class="alert alert-primary border-start border-primary border-4 rounded-3"
+         role="alert">
+        Deseja realmente remover este pedido?
+    </div>
+
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Produto</dt>
+        <dd class="col-sm-8">@Model.NomeProduto</dd>
+
+        <dt class="col-sm-4">Preço praticado</dt>
+        <dd class="col-sm-8">@Model.PrecoPraticado.ToString("C")</dd>
+
+        <dt class="col-sm-4">Quantidade</dt>
+        <dd class="col-sm-8">@Model.Quantidade</dd>
+
+        <dt class="col-sm-4">Subtotal</dt>
+        <dd class="col-sm-8 fw-semibold">@Model.Subtotal.ToString("C")</dd>
+    </dl>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a class="btn btn-outline-primary rounded-pill px-4"
+           asp-controller="Conta"
+           asp-action="Detalhes"
+           asp-route-id="@Model.ContaId">
+            Voltar
+        </a>
+
+        <button class="btn btn-primary rounded-pill px-4"
+                type="submit">
+            Confirmar Remoção
+        </button>
+    </div>
+</form>

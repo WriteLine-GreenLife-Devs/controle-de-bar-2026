@@ -1,5 +1,7 @@
 @using ControleDeBar.WebApp.Modulos.ModuloConta
+@using ControleDeBar.WebApp.Modulos.ModuloPedido
 @using ControleDeBar.Dominio.Modulos.ModuloConta
+
 @{
     Layout = "_Layout";
     ViewBag.Titulo = "Detalhes da Conta";
@@ -8,9 +10,9 @@
 @model DetalhesContaViewModel;
 
 <div class="card border-primary-subtle shadow-sm mx-auto p-4"
-     style="max-width: 720px;">
+     style="max-width: 900px;">
 
-    <dl class="row mb-0">
+    <dl class="row mb-4">
         <dt class="col-sm-4">Cliente</dt>
         <dd class="col-sm-8">@Model.NomeCliente</dd>
 
@@ -36,6 +38,92 @@
             </dd>
         }
     </dl>
+
+    <hr>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Pedidos</h5>
+
+        @if (Model.Status == StatusConta.Aberta)
+        {
+            <a class="btn btn-outline-primary rounded-pill px-4"
+               asp-controller="Pedido"
+               asp-action="Adicionar"
+               asp-route-contaId="@Model.Id">
+                Adicionar Produto
+            </a>
+        }
+    </div>
+
+    @if (Model.Pedidos.Count == 0)
+    {
+        <div class="alert alert-primary"
+             role="alert"
+             data-testid="pedidos-estado-vazio">
+            Nenhum pedido adicionado.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Preço Praticado</th>
+                        <th>Quantidade</th>
+                        <th>Subtotal</th>
+
+                        @if (Model.Status == StatusConta.Aberta)
+                        {
+                            <th class="text-end">Ações</th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (ListarPedidoViewModel pedido in Model.Pedidos)
+                    {
+                        <tr data-testid="pedido-linha">
+                            <td>@pedido.NomeProduto</td>
+
+                            <td>
+                                @pedido.PrecoPraticado.ToString("C")
+                            </td>
+
+                            <td>
+                                @pedido.Quantidade
+                            </td>
+
+                            <td>
+                                @pedido.Subtotal.ToString("C")
+                            </td>
+
+                            @if (Model.Status == StatusConta.Aberta)
+                            {
+                                <td>
+                                    <div class="d-flex justify-content-end">
+                                        <a class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                                           asp-controller="Pedido"
+                                           asp-action="Remover"
+                                           asp-route-id="@pedido.Id">
+                                            Remover
+                                        </a>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="d-flex justify-content-end mt-3">
+        <div class="fs-5 fw-semibold">
+            Total: @Model.Total.ToString("C")
+        </div>
+    </div>
 
     <div class="d-flex justify-content-end gap-2 mt-4">
         <a class="btn btn-outline-primary rounded-pill px-4"

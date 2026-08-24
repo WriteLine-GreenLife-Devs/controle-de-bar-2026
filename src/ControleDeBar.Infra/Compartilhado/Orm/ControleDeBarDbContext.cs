@@ -3,6 +3,7 @@ using ControleDeBar.Dominio.Compartilhado.Identity;
 using ControleDeBar.Dominio.Modulos.ModuloConta;
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
 using ControleDeBar.Dominio.Modulos.ModuloMesa;
+using ControleDeBar.Dominio.Modulos.ModuloPedido;
 using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public sealed class ControleDeBarDbContext(
     public DbSet<Garcom> Garcons => Set<Garcom>();
     public DbSet<Mesa> Mesas => Set<Mesa>();
     public DbSet<Produto> Produtos => Set<Produto>();
+    public DbSet<Pedido> Pedidos => Set<Pedido>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +42,9 @@ public sealed class ControleDeBarDbContext(
                 .HasQueryFilter(m => m.UserId == userProvider.Id);
 
             modelBuilder.Entity<Produto>()
+                .HasQueryFilter(p => p.UserId == userProvider.Id);
+
+            modelBuilder.Entity<Pedido>()
                 .HasQueryFilter(p => p.UserId == userProvider.Id);
         }
     }

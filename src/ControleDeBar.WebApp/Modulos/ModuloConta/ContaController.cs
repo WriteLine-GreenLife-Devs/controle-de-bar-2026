@@ -2,8 +2,10 @@ using AutoMapper;
 using ControleDeBar.Aplicacao.Modulos.ModuloConta;
 using ControleDeBar.Aplicacao.Modulos.ModuloGarcom;
 using ControleDeBar.Aplicacao.Modulos.ModuloMesa;
+using ControleDeBar.Aplicacao.Modulos.ModuloPedido;
 using ControleDeBar.Dominio.Modulos.ModuloConta;
 using ControleDeBar.WebApp.Compartilhado.Extensions;
+using ControleDeBar.WebApp.Modulos.ModuloPedido;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +16,7 @@ public class ContaController(
     ServicoConta servicoConta,
     ServicoMesa servicoMesa,
     ServicoGarcom servicoGarcom,
+    ServicoPedido servicoPedido,
     IMapper mapeador
 ) : Controller
 {
@@ -85,8 +88,27 @@ public class ContaController(
             return RedirectToAction(nameof(Listar));
         }
 
-        DetalhesContaViewModel detalhesVm =
-            mapeador.Map<DetalhesContaViewModel>(resultado.Value);
+        List<ListarPedidoDto> pedidos =
+            servicoPedido.SelecionarPorConta(id);
+
+        decimal total =
+            servicoPedido.CalcularTotal(id);
+
+        DetalhesContaDto contaDto = resultado.Value;
+
+        DetalhesContaViewModel detalhesVm = new(
+            contaDto.Id,
+            contaDto.MesaId,
+            contaDto.NumeroMesa,
+            contaDto.GarcomId,
+            contaDto.NomeGarcom,
+            contaDto.NomeCliente,
+            contaDto.DataAbertura,
+            contaDto.DataFechamento,
+            contaDto.Status,
+            mapeador.Map<List<ListarPedidoViewModel>>(pedidos),
+            total
+        );
 
         return View(detalhesVm);
     }

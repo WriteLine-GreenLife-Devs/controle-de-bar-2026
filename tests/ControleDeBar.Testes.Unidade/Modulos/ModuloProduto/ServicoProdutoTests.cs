@@ -1,4 +1,5 @@
 using ControleDeBar.Aplicacao.Modulos.ModuloProduto;
+using ControleDeBar.Dominio.Modulos.ModuloPedido;
 using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using FluentResults;
 using Moq;
@@ -9,13 +10,15 @@ namespace ControleDeBar.Testes.Unidade.Modulos.ModuloProduto;
 public sealed class ServicoProdutoTests
 {
     private Mock<IRepositorioProduto> repositorioProdutoMock = null!;
+    private Mock<IRepositorioPedido> repositorioPedidoMock = null!;
     private ServicoProduto servicoProduto = null!;
 
     [TestInitialize]
     public void Inicializar()
     {
         repositorioProdutoMock = new Mock<IRepositorioProduto>();
-        servicoProduto = new ServicoProduto(repositorioProdutoMock.Object);
+        repositorioPedidoMock = new Mock<IRepositorioPedido>();
+        servicoProduto = new ServicoProduto(repositorioProdutoMock.Object, repositorioPedidoMock.Object);
     }
 
     [TestMethod]
@@ -213,6 +216,7 @@ public sealed class ServicoProdutoTests
 
         repositorioProdutoMock.Setup(r => r.SelecionarPorId(id)).Returns(produto);
         repositorioProdutoMock.Setup(r => r.Excluir(id)).Returns(true);
+        repositorioPedidoMock.Setup(r => r.SelecionarTodos()).Returns([]);
 
         // Act
         Result resultado = servicoProduto.Excluir(id);
@@ -220,6 +224,36 @@ public sealed class ServicoProdutoTests
         // Assert
         Assert.IsTrue(resultado.IsSuccess);
         repositorioProdutoMock.Verify(r => r.Excluir(id), Times.Once);
+    }
+
+    [TestMethod]
+    public void Deve_RejeitarExclusao_QuandoProdutoTemPedidoVinculado()
+    {
+        // Arrange
+        Guid produtoId = Guid.CreateVersion7();
+        Guid pedidoId = Guid.CreateVersion7();
+        var produto = new Produto("Cerveja", 8.50m) { Id = produtoId };
+        var pedido = new Pedido(
+            Guid.CreateVersion7(),
+            produtoId,
+            "Cerveja",
+            8.50m,
+            1
+        ) { Id = pedidoId };
+
+        repositorioProdutoMock.Setup(r => r.SelecionarPorId(produtoId)).Returns(produto);
+        repositorioPedidoMock.Setup(r => r.SelecionarTodos()).Returns([pedido]);
+
+        // Act
+        Result resultado = servicoProduto.Excluir(produtoId);
+
+        // Assert
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.AreEqual(
+            "Não é possível excluir este produto, pois ele está vinculado a um pedido.",
+            resultado.Errors[0].Message
+        );
+        repositorioProdutoMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
     }
 
     [TestMethod]

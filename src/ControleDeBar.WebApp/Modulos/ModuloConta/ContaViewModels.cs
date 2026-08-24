@@ -1,4 +1,5 @@
 using ControleDeBar.Dominio.Modulos.ModuloConta;
+using ControleDeBar.WebApp.Modulos.ModuloPedido;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -44,7 +45,9 @@ public record DetalhesContaViewModel(
     string NomeCliente,
     DateTime DataAbertura,
     DateTime? DataFechamento,
-    StatusConta Status
+    StatusConta Status,
+    List<ListarPedidoViewModel> Pedidos,
+    decimal Total
 );
 
 public record FecharContaViewModel(
