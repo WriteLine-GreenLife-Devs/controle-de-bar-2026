@@ -1,0 +1,66 @@
+@using ControleDeBar.WebApp.Modulos.ModuloFaturamento
+
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Faturamento Diário";
+}
+
+@model ConsultarFaturamentoViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4 mb-4"
+      style="max-width: 620px;"
+      asp-action="Consultar"
+      method="get">
+    <div class="mb-3">
+        <label asp-for="Data"
+               class="form-label fw-semibold text-primary text-uppercase small">
+            Data
+        </label>
+        <input asp-for="Data" class="form-control" />
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-primary rounded-pill px-4" type="submit">
+            Consultar
+        </button>
+    </div>
+</form>
+
+<div class="d-flex justify-content-end mb-3">
+    <div class="fs-5 fw-semibold" data-testid="faturamento-total">
+        Total: @Model.Total.ToString("C")
+    </div>
+</div>
+
+@if (Model.Contas.Count == 0)
+{
+    <div class="alert alert-primary" role="alert" data-testid="faturamento-estado-vazio">
+        Nenhuma conta fechada nesta data.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Mesa</th>
+                    <th>Data de Fechamento</th>
+                    <th>Total da Conta</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ContaFaturamentoViewModel conta in Model.Contas)
+                {
+                    <tr data-testid="faturamento-conta-linha">
+                        <td>@conta.NomeCliente</td>
+                        <td>Mesa @conta.NumeroMesa</td>
+                        <td>@conta.DataFechamento.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@conta.Total.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

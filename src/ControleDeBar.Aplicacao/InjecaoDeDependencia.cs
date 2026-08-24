@@ -5,6 +5,7 @@ using ControleDeBar.Aplicacao.Modulos.ModuloMesa;
 using ControleDeBar.Aplicacao.Modulos.ModuloProduto;
 using ControleDeBar.Aplicacao.Modulos.ModuloConta;
 using ControleDeBar.Aplicacao.Modulos.ModuloPedido;
+using ControleDeBar.Aplicacao.Modulos.ModuloFaturamento;
 
 namespace ControleDeBar.Aplicacao;
 
@@ -20,5 +21,6 @@ public static class InjecaoDeDependencia
         services.AddScoped<ServicoProduto>();
         services.AddScoped<ServicoConta>();
         services.AddScoped<ServicoPedido>();
+        services.AddScoped<ServicoFaturamento>();
     }
 }
