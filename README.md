@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Testes-243%20aprovados-success?style=flat-square" alt="243 testes aprovados">
+  <img src="https://img.shields.io/badge/Testes-248%20aprovados-success?style=flat-square" alt="248 testes aprovados">
   <img src="https://img.shields.io/badge/Unitários-128-success?style=flat-square" alt="128 testes unitários">
-  <img src="https://img.shields.io/badge/Integração-55-success?style=flat-square" alt="55 testes de integração">
+  <img src="https://img.shields.io/badge/Integração-60-success?style=flat-square" alt="60 testes de integração">
   <img src="https://img.shields.io/badge/E2E-60-success?style=flat-square" alt="60 testes E2E">
 </p>
 
@@ -346,9 +346,9 @@ O projeto possui três níveis de testes automatizados.
 | Suíte | Testes | Finalidade |
 |---|---:|---|
 | 🧩 Unitários | **128** | Domínio e serviços de aplicação |
-| 🔗 Integração | **55** | EF Core, repositórios, relacionamentos e multi-tenancy |
+| 🔗 Integração | **60** | EF Core, repositórios, relacionamentos e multi-tenancy |
 | 🌐 E2E | **60** | Fluxos completos através da interface |
-| **Total** | **243** | **243 aprovados** |
+| **Total** | **248** | **248 aprovados** |
 
 ### 🧩 Testes unitários
 
@@ -418,10 +418,10 @@ dotnet test ControleDeBar.slnx -v minimal
 
 ```text
 Unitários     128 / 128
-Integração     55 / 55
+Integração     60 / 60
 E2E            60 / 60
 ──────────────────────
-Total         243 / 243
+Total         248 / 248
 ```
 
 ---

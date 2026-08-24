@@ -55,6 +55,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Middleware de reconhecimento de rotas de controllers
+app.MapHealthChecks("/health").AllowAnonymous();
 app.MapDefaultControllerRoute();
 
 // Execução do Servidor
