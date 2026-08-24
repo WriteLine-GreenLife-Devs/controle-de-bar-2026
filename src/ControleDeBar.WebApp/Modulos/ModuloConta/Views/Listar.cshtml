@@ -1,0 +1,121 @@
+@using ControleDeBar.WebApp.Modulos.ModuloConta
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Contas";
+}
+
+@model ListagemContasViewModel;
+
+<a class="btn btn-outline-primary rounded-pill px-4 mb-4"
+   asp-action="Abrir">
+    Abrir Conta
+</a>
+
+@if (TempData["MensagemErro"] is string mensagemErro)
+{
+    <div class="alert alert-danger" role="alert">
+        @mensagemErro
+    </div>
+}
+
+<h5 class="mb-3">Contas Abertas</h5>
+
+@if (Model.Abertas.Count == 0)
+{
+    <div class="alert alert-primary"
+         role="alert"
+         data-testid="contas-abertas-estado-vazio">
+        Nenhuma conta aberta.
+    </div>
+}
+else
+{
+    <div class="table-responsive mb-5">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Mesa</th>
+                    <th>Garçom</th>
+                    <th>Data de Abertura</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ListarContaViewModel conta in Model.Abertas)
+                {
+                    <tr data-testid="conta-aberta-linha">
+                        <td>@conta.NomeCliente</td>
+                        <td>Mesa @conta.NumeroMesa</td>
+                        <td>@conta.NomeGarcom</td>
+                        <td>@conta.DataAbertura.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                                   asp-action="Detalhes"
+                                   asp-route-id="@conta.Id">
+                                    Detalhes
+                                </a>
+
+                                <a class="btn btn-primary btn-sm rounded-pill px-3"
+                                   asp-action="Fechar"
+                                   asp-route-id="@conta.Id">
+                                    Fechar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<h5 class="mb-3">Contas Fechadas</h5>
+
+@if (Model.Fechadas.Count == 0)
+{
+    <div class="alert alert-primary"
+         role="alert"
+         data-testid="contas-fechadas-estado-vazio">
+        Nenhuma conta fechada.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Mesa</th>
+                    <th>Garçom</th>
+                    <th>Data de Abertura</th>
+                    <th>Data de Fechamento</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ListarContaViewModel conta in Model.Fechadas)
+                {
+                    <tr data-testid="conta-fechada-linha">
+                        <td>@conta.NomeCliente</td>
+                        <td>Mesa @conta.NumeroMesa</td>
+                        <td>@conta.NomeGarcom</td>
+                        <td>@conta.DataAbertura.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@conta.DataFechamento?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                                   asp-action="Detalhes"
+                                   asp-route-id="@conta.Id">
+                                    Detalhes
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,48 @@
+@using ControleDeBar.WebApp.Modulos.ModuloConta
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Fechamento de Conta";
+}
+
+@model FecharContaViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4"
+      style="max-width: 620px;"
+      asp-action="Fechar"
+      method="post">
+
+    <input asp-for="Id" type="hidden">
+
+    <div class="alert alert-primary border-start border-primary border-4 rounded-3"
+         role="alert">
+        Deseja realmente fechar esta conta?
+    </div>
+
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Cliente</dt>
+        <dd class="col-sm-8">@Model.NomeCliente</dd>
+
+        <dt class="col-sm-4">Mesa</dt>
+        <dd class="col-sm-8">Mesa @Model.NumeroMesa</dd>
+
+        <dt class="col-sm-4">Garçom</dt>
+        <dd class="col-sm-8">@Model.NomeGarcom</dd>
+
+        <dt class="col-sm-4">Data de Abertura</dt>
+        <dd class="col-sm-8">
+            @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")
+        </dd>
+    </dl>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a class="btn btn-outline-primary rounded-pill px-4"
+           asp-action="Listar">
+            Voltar
+        </a>
+
+        <button class="btn btn-primary rounded-pill px-4"
+                type="submit">
+            Confirmar Fechamento
+        </button>
+    </div>
+</form>

@@ -1,0 +1,73 @@
+@using ControleDeBar.WebApp.Modulos.ModuloConta
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Abertura de Conta";
+}
+
+@model AbrirContaViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4"
+      style="max-width: 620px;"
+      asp-action="Abrir"
+      method="post">
+
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger small fw-semibold mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="NomeCliente"
+               class="form-label fw-semibold text-primary text-uppercase small">
+            Nome do Cliente
+        </label>
+
+        <input asp-for="NomeCliente"
+               class="form-control">
+
+        <span asp-validation-for="NomeCliente"
+              class="text-danger small fw-semibold"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MesaId"
+               class="form-label fw-semibold text-primary text-uppercase small">
+            Mesa
+        </label>
+
+        <select asp-for="MesaId"
+                asp-items="Model.Mesas"
+                class="form-select">
+            <option value="">Selecione uma mesa</option>
+        </select>
+
+        <span asp-validation-for="MesaId"
+              class="text-danger small fw-semibold"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="GarcomId"
+               class="form-label fw-semibold text-primary text-uppercase small">
+            Garçom
+        </label>
+
+        <select asp-for="GarcomId"
+                asp-items="Model.Garcons"
+                class="form-select">
+            <option value="">Selecione um garçom</option>
+        </select>
+
+        <span asp-validation-for="GarcomId"
+              class="text-danger small fw-semibold"></span>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a class="btn btn-outline-primary rounded-pill px-4"
+           asp-action="Listar">
+            Voltar
+        </a>
+
+        <button class="btn btn-primary rounded-pill px-4"
+                type="submit">
+            Abrir Conta
+        </button>
+    </div>
+</form>

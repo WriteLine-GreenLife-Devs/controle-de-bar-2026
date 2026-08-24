@@ -13,6 +13,8 @@ using Serilog;
 using Microsoft.Extensions.Hosting;
 using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using ControleDeBar.Infra.Modulos.ModuloProduto;
+using ControleDeBar.Dominio.Modulos.ModuloConta;
+using ControleDeBar.Infra.Modulos.ModuloConta;
 
 namespace ControleDeBar.Infra;
 
@@ -72,5 +74,6 @@ public static class InjecaoDeDependencia
         services.AddScoped<IRepositorioGarcom, RepositorioGarcomEmOrm>();
         services.AddScoped<IRepositorioMesa, RepositorioMesaEmOrm>();
         services.AddScoped<IRepositorioProduto, RepositorioProdutoEmOrm>();
+        services.AddScoped<IRepositorioConta, RepositorioContaEmOrm>();
     }
 }

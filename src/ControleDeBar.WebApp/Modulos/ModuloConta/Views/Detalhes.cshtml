@@ -1,0 +1,55 @@
+@using ControleDeBar.WebApp.Modulos.ModuloConta
+@using ControleDeBar.Dominio.Modulos.ModuloConta
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Detalhes da Conta";
+}
+
+@model DetalhesContaViewModel;
+
+<div class="card border-primary-subtle shadow-sm mx-auto p-4"
+     style="max-width: 720px;">
+
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Cliente</dt>
+        <dd class="col-sm-8">@Model.NomeCliente</dd>
+
+        <dt class="col-sm-4">Mesa</dt>
+        <dd class="col-sm-8">Mesa @Model.NumeroMesa</dd>
+
+        <dt class="col-sm-4">Garçom</dt>
+        <dd class="col-sm-8">@Model.NomeGarcom</dd>
+
+        <dt class="col-sm-4">Data de Abertura</dt>
+        <dd class="col-sm-8">
+            @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")
+        </dd>
+
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8">@Model.Status</dd>
+
+        @if (Model.DataFechamento.HasValue)
+        {
+            <dt class="col-sm-4">Data de Fechamento</dt>
+            <dd class="col-sm-8">
+                @Model.DataFechamento.Value.ToString("dd/MM/yyyy HH:mm")
+            </dd>
+        }
+    </dl>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a class="btn btn-outline-primary rounded-pill px-4"
+           asp-action="Listar">
+            Voltar
+        </a>
+
+        @if (Model.Status == StatusConta.Aberta)
+        {
+            <a class="btn btn-primary rounded-pill px-4"
+               asp-action="Fechar"
+               asp-route-id="@Model.Id">
+                Fechar Conta
+            </a>
+        }
+    </div>
+</div>
