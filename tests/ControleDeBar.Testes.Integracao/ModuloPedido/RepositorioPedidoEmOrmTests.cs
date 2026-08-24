@@ -314,4 +314,36 @@ public sealed class RepositorioPedidoEmOrmTests : RepositorioBaseEmOrmTests
         Assert.AreEqual("Coca-Cola 600ml", produtoAlterado.Nome, "Produto deve ter nome alterado");
         Assert.AreEqual(12m, produtoAlterado.Preco, "Produto deve ter preço alterado");
     }
+
+    [TestMethod]
+    public void Deve_CarregarRelacionamentos_ContaEProduto_DoPedido()
+    {
+        // Arrange
+        Mesa mesa = new(8, 4);
+        Garcom garcom = new("Rafael");
+        repositorioGarcom.Cadastrar(garcom);
+        repositorioConta.Cadastrar(new Conta(mesa.Id, garcom.Id, "Carlos"));
+        repositorioMesa.Cadastrar(mesa);
+
+        Conta conta = repositorioConta.SelecionarTodos().Single();
+        Produto produto = new("Cerveja", 8.50m);
+        repositorioProduto.Cadastrar(produto);
+
+        Pedido pedido = new(conta.Id, produto.Id, produto.Nome, produto.Preco, 2);
+        repositorioPedido.Cadastrar(pedido);
+        dbContext.ChangeTracker.Clear();
+
+        // Act
+        Pedido? pedidoCarregado = dbContext.Pedidos
+            .Include(p => p.Conta)
+            .Include(p => p.Produto)
+            .SingleOrDefault(p => p.Id == pedido.Id);
+
+        // Assert
+        Assert.IsNotNull(pedidoCarregado);
+        Assert.IsNotNull(pedidoCarregado.Conta);
+        Assert.AreEqual(pedidoCarregado.ContaId, pedidoCarregado.Conta.Id);
+        Assert.IsNotNull(pedidoCarregado.Produto);
+        Assert.AreEqual(pedidoCarregado.ProdutoId, pedidoCarregado.Produto.Id);
+    }
 }

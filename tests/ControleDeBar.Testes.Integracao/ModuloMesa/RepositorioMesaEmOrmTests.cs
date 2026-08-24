@@ -194,6 +194,42 @@ public sealed class RepositorioMesaEmOrmTests : RepositorioBaseEmOrmTests
     }
 
     [TestMethod]
+    public void Deve_PreservarEstadoDoBanco_AposFalhaDeSaveChanges()
+    {
+        // Arrange
+        Mesa mesa = new(4, 4);
+        repositorioMesa.Cadastrar(mesa);
+        dbContext.ChangeTracker.Clear();
+
+        Guid outroUsuarioId = Guid.CreateVersion7();
+        using (ControleDeBarDbContext contextoInvalido = CriarDbContext(outroUsuarioId))
+        {
+            Mesa mesaAlterada = new(4, 4)
+            {
+                Id = mesa.Id,
+                UserId = userId
+            };
+
+            contextoInvalido.Attach(mesaAlterada);
+            mesaAlterada.Numero = 99;
+            mesaAlterada.Lugares = 99;
+
+            // Act
+            Action salvarAlteracoes = () => contextoInvalido.SaveChanges();
+
+            // Assert
+            Assert.Throws<UnauthorizedAccessException>(salvarAlteracoes);
+        }
+
+        dbContext.ChangeTracker.Clear();
+        Mesa? mesaPersistida = repositorioMesa.SelecionarPorId(mesa.Id);
+
+        Assert.IsNotNull(mesaPersistida);
+        Assert.AreEqual(4, mesaPersistida.Numero);
+        Assert.AreEqual(4, mesaPersistida.Lugares);
+    }
+
+    [TestMethod]
     public void Modelo_ConfiguraIndiceUnicoPorUsuarioENumero()
     {
         // Arrange

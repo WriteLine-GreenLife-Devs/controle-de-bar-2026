@@ -6,6 +6,7 @@ using ControleDeBar.Infra.Modulos.ModuloConta;
 using ControleDeBar.Infra.Modulos.ModuloGarcom;
 using ControleDeBar.Infra.Modulos.ModuloMesa;
 using ControleDeBar.Testes.Integracao.Compartilhado.Orm;
+using Microsoft.EntityFrameworkCore;
 
 namespace ControleDeBar.Testes.Integracao.ModuloConta;
 
@@ -131,5 +132,34 @@ public sealed class RepositorioContaEmOrmTests : RepositorioBaseEmOrmTests
 
         Assert.HasCount(2, contas);
         Assert.AreEqual(2, contas.Count(c => c.MesaId == mesa.Id));
+    }
+
+    [TestMethod]
+    public void Deve_CarregarRelacionamentos_MesaEGarcom_DaConta()
+    {
+        // Arrange
+        Mesa mesa = new(7, 6);
+        Garcom garcom = new("Rafael");
+        repositorioMesa.Cadastrar(mesa);
+        repositorioGarcom.Cadastrar(garcom);
+
+        Conta conta = new(mesa.Id, garcom.Id, "Carlos");
+        repositorioConta.Cadastrar(conta);
+        dbContext.ChangeTracker.Clear();
+
+        // Act
+        Conta? contaCarregada = dbContext.Contas
+            .Include(c => c.Mesa)
+            .Include(c => c.Garcom)
+            .SingleOrDefault(c => c.Id == conta.Id);
+
+        // Assert
+        Assert.IsNotNull(contaCarregada);
+        Assert.IsNotNull(contaCarregada.Mesa);
+        Assert.AreEqual(contaCarregada.MesaId, contaCarregada.Mesa.Id);
+        Assert.AreEqual(7, contaCarregada.Mesa.Numero);
+        Assert.IsNotNull(contaCarregada.Garcom);
+        Assert.AreEqual(contaCarregada.GarcomId, contaCarregada.Garcom.Id);
+        Assert.AreEqual("Rafael", contaCarregada.Garcom.Nome);
     }
 }
