@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Playwright;
 
 namespace ControleDeBar.Testes.E2E.Modulos.ModuloPedido;
@@ -20,9 +21,14 @@ public sealed class PedidoFormPage(
 
     public async Task SelecionarProdutoAsync(string nome, decimal preco)
     {
+        string precoFormatado = preco.ToString(
+            "C",
+            CultureInfo.GetCultureInfo("pt-BR")
+        );
+
         await Produto.SelectOptionAsync(new SelectOptionValue
         {
-            Label = $"{nome} - {preco:C}"
+            Label = $"{nome} - {precoFormatado}"
         });
     }
 

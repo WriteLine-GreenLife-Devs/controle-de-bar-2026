@@ -316,7 +316,12 @@ public sealed class PedidoE2ETests : E2ETestsBase
 
     private ILocator TotalDaConta(decimal total)
     {
-        return Page.GetByText($"Total: {total:C}", new() { Exact = true });
+        string totalFormatado = total.ToString(
+            "C",
+            CultureInfo.GetCultureInfo("pt-BR")
+        );
+
+        return Page.GetByText($"Total: {totalFormatado}", new() { Exact = true });
     }
 
     private string UrlDetalhes(Guid contaId) => $"{UrlBase}/Conta/Detalhes/{contaId}";
