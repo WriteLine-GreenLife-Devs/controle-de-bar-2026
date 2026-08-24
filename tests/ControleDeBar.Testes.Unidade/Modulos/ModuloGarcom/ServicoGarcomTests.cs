@@ -1,5 +1,6 @@
 using ControleDeBar.Aplicacao.Modulos.ModuloGarcom;
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
+using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using FluentResults;
 using Moq;
 

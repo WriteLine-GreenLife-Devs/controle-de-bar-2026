@@ -1,23 +1,25 @@
 using AutoMapper;
-using ControleDeBar.Aplicacao.Modulos.ModuloMesa;
 using ControleDeBar.Aplicacao.Modulos.ModuloProduto;
 using ControleDeBar.WebApp.Compartilhado.Extensions;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ControleDeBar.WebApp.Modulos.ModuloMesa;
+namespace ControleDeBar.WebApp.Modulos.ModuloProduto;
 
-public class MesaController(
-    ServicoMesa servicoMesa,
+public class ProdutoController(
+    ServicoProduto servicoProduto,
     IMapper mapeador
 ) : Controller
 {
     [HttpGet]
-    public ActionResult Listar()
+    public ActionResult Listar(string? nome)
     {
-        List<ListarMesaDto> dtos = servicoMesa.SelecionarTodos();
+        List<ListarProdutoDto> dtos = servicoProduto.Buscar(nome);
 
-        List<ListarMesaViewModel> listarVms = mapeador.Map<List<ListarMesaViewModel>>(dtos);
+        List<ListarProdutoViewModel> listarVms =
+            mapeador.Map<List<ListarProdutoViewModel>>(dtos);
+
+        ViewBag.NomeBuscado = nome;
 
         return View(listarVms);
     }
@@ -25,18 +27,20 @@ public class MesaController(
     [HttpGet]
     public ActionResult Cadastrar()
     {
-        return View(new CadastrarMesaViewModel(0, 0));
+        return View(new CadastrarProdutoViewModel(string.Empty, 0));
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Cadastrar(CadastrarMesaViewModel cadastrarVm)
+    public ActionResult Cadastrar(CadastrarProdutoViewModel cadastrarVm)
     {
         if (!ModelState.IsValid)
             return View(cadastrarVm);
 
-        CadastrarMesaDto dto = mapeador.Map<CadastrarMesaDto>(cadastrarVm);
-        Result resultado = servicoMesa.Cadastrar(dto);
+        CadastrarProdutoDto dto =
+            mapeador.Map<CadastrarProdutoDto>(cadastrarVm);
+
+        Result resultado = servicoProduto.Cadastrar(dto);
 
         if (resultado.IsFailed)
         {
@@ -50,7 +54,8 @@ public class MesaController(
     [HttpGet]
     public ActionResult Editar(Guid id)
     {
-        Result<DetalhesMesaDto> resultado = servicoMesa.SelecionarPorId(id);
+        Result<DetalhesProdutoDto> resultado =
+            servicoProduto.SelecionarPorId(id);
 
         if (resultado.IsFailed)
         {
@@ -58,18 +63,22 @@ public class MesaController(
             return RedirectToAction(nameof(Listar));
         }
 
-        return View(mapeador.Map<EditarMesaViewModel>(resultado.Value));
+        return View(
+            mapeador.Map<EditarProdutoViewModel>(resultado.Value)
+        );
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Editar(EditarMesaViewModel editarVm)
+    public ActionResult Editar(EditarProdutoViewModel editarVm)
     {
         if (!ModelState.IsValid)
             return View(editarVm);
 
-        EditarMesaDto dto = mapeador.Map<EditarMesaDto>(editarVm);
-        Result resultado = servicoMesa.Editar(dto);
+        EditarProdutoDto dto =
+            mapeador.Map<EditarProdutoDto>(editarVm);
+
+        Result resultado = servicoProduto.Editar(dto);
 
         if (resultado.IsFailed)
         {
@@ -83,7 +92,8 @@ public class MesaController(
     [HttpGet]
     public ActionResult Excluir(Guid id)
     {
-        Result<DetalhesMesaDto> resultado = servicoMesa.SelecionarPorId(id);
+        Result<DetalhesProdutoDto> resultado =
+            servicoProduto.SelecionarPorId(id);
 
         if (resultado.IsFailed)
         {
@@ -91,14 +101,17 @@ public class MesaController(
             return RedirectToAction(nameof(Listar));
         }
 
-        return View(mapeador.Map<ExcluirMesaViewModel>(resultado.Value));
+        return View(
+            mapeador.Map<ExcluirProdutoViewModel>(resultado.Value)
+        );
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Excluir(ExcluirMesaViewModel excluirVm)
+    public ActionResult Excluir(ExcluirProdutoViewModel excluirVm)
     {
-        Result resultado = servicoMesa.Excluir(excluirVm.Id);
+        Result resultado =
+            servicoProduto.Excluir(excluirVm.Id);
 
         if (resultado.IsFailed)
             TempData.AddErrorMessage(resultado);

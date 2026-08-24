@@ -1,4 +1,5 @@
 using ControleDeBar.Aplicacao.Modulos.ModuloMesa;
+using ControleDeBar.Aplicacao.Modulos.ModuloProduto;
 using ControleDeBar.Dominio.Modulos.ModuloMesa;
 using FluentResults;
 using Moq;

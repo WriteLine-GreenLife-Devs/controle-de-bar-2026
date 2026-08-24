@@ -1,5 +1,6 @@
 using ControleDeBar.Aplicacao.Compartilhado;
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
+using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using FluentResults;
 
 namespace ControleDeBar.Aplicacao.Modulos.ModuloGarcom;

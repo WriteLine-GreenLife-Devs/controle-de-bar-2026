@@ -1,4 +1,5 @@
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
+using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using ControleDeBar.Infra.Compartilhado.Orm;
 
 namespace ControleDeBar.Infra.Modulos.ModuloGarcom;

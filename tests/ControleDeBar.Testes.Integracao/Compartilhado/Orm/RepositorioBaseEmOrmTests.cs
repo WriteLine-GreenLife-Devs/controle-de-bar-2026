@@ -1,6 +1,7 @@
 using ControleDeBar.Infra.Compartilhado.Orm;
 using ControleDeBar.Infra.Modulos.ModuloGarcom;
 using ControleDeBar.Infra.Modulos.ModuloMesa;
+using ControleDeBar.Infra.Modulos.ModuloProduto;
 using ControleDeBar.Testes.Integracao.Compartilhado.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -18,7 +19,7 @@ public abstract class RepositorioBaseEmOrmTests
     protected RepositorioMesaEmOrm repositorioMesa = null!;
 
     [TestInitialize]
-    public void InicializarContexto()
+    public virtual void InicializarContexto()
     {
         nomeBanco = $"integracao-{Guid.NewGuid():N}";
         raizBanco = new InMemoryDatabaseRoot();

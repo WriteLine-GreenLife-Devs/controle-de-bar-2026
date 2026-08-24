@@ -1,5 +1,6 @@
 using AutoMapper;
 using ControleDeBar.Aplicacao.Modulos.ModuloMesa;
+using ControleDeBar.Aplicacao.Modulos.ModuloProduto;
 
 namespace ControleDeBar.WebApp.Modulos.ModuloMesa;
 

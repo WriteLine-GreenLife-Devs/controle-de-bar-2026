@@ -1,0 +1,70 @@
+@using ControleDeBar.WebApp.Modulos.ModuloProduto
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Produtos";
+}
+
+@model List<ListarProdutoViewModel>;
+
+<div class="d-flex gap-3 mb-3">
+    <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Cadastrar">
+        Cadastrar Produto
+    </a>
+
+    <form asp-action="Listar" method="get" class="flex-grow-1">
+        <div class="input-group">
+            <input type="text" class="form-control rounded-pill" placeholder="Buscar por nome..." name="nome" value="@ViewBag.NomeBuscado">
+            <button class="btn btn-outline-primary rounded-pill px-4" type="submit">Buscar</button>
+        </div>
+    </form>
+</div>
+
+@if (TempData["MensagemErro"] is string mensagemErro)
+{
+    <div class="alert alert-danger" role="alert">@mensagemErro</div>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-primary" role="alert" data-testid="produtos-estado-vazio">
+        Nenhum produto cadastrado.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ListarProdutoViewModel produto in Model)
+                {
+                    <tr data-testid="produto-linha">
+                        <td>@produto.Nome</td>
+                        <td>@produto.Preco.ToString("C")</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                                   asp-action="Editar"
+                                   asp-route-id="@produto.Id">
+                                    Editar
+                                </a>
+
+                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                                   asp-action="Excluir"
+                                   asp-route-id="@produto.Id">
+                                    Excluir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

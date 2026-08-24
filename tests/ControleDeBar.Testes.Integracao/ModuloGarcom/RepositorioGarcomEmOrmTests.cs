@@ -1,5 +1,6 @@
 using ControleDeBar.Dominio.Compartilhado.Identity;
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
+using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using ControleDeBar.Infra.Compartilhado.Orm;
 using ControleDeBar.Infra.Modulos.ModuloGarcom;
 using ControleDeBar.Testes.Integracao.Compartilhado.Orm;

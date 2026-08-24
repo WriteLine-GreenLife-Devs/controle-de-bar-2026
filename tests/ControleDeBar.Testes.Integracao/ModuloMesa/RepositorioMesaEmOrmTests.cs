@@ -2,6 +2,7 @@ using ControleDeBar.Dominio.Compartilhado.Identity;
 using ControleDeBar.Dominio.Modulos.ModuloMesa;
 using ControleDeBar.Infra.Compartilhado.Orm;
 using ControleDeBar.Infra.Modulos.ModuloMesa;
+using ControleDeBar.Infra.Modulos.ModuloProduto;
 using ControleDeBar.Testes.Integracao.Compartilhado.Orm;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;

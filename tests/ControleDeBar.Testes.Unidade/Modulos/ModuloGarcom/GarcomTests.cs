@@ -1,4 +1,5 @@
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
+using ControleDeBar.Dominio.Modulos.ModuloProduto;
 
 namespace ControleDeBar.Testes.Unidade.Modulos.ModuloGarcom;
 
