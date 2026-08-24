@@ -1,8 +1,10 @@
+using System.Globalization;
 using ControleDeBar.Aplicacao;
 using ControleDeBar.Infra;
 using ControleDeBar.Infra.Compartilhado.Orm;
 using ControleDeBar.WebApp.Compartilhado;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +40,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // Middlewares de roteamento
+RequestLocalizationOptions localizacaoPortuguesBrasil = new()
+{
+    DefaultRequestCulture = new RequestCulture("pt-BR"),
+    SupportedCultures = [new CultureInfo("pt-BR")],
+    SupportedUICultures = [new CultureInfo("pt-BR")]
+};
+
+app.UseRequestLocalization(localizacaoPortuguesBrasil);
 app.UseRouting();
 
 // Middlewares de Auth
