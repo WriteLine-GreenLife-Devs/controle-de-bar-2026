@@ -140,6 +140,49 @@ public sealed class ContaE2ETests : E2ETestsBase
     }
 
     [TestMethod]
+    public async Task Deve_ManterMesaOcupada_AteFechamentoDaUltimaConta()
+    {
+        // Arrange
+        await RegistrarEEntrarAsync("conta.mesa.ocupada@teste.local", SenhaValida);
+        await CadastrarMesaAsync(1, 4);
+        await CadastrarGarcomAsync("Marcos");
+
+        await AbrirContaAsync("Carlos", 1, 4, "Marcos");
+        await AbrirContaAsync("Maria", 1, 4, "Marcos");
+
+        ContaListarPage contaListarPage = new(Page, UrlBase);
+        MesaListarPage mesaListarPage = new(Page, UrlBase);
+
+        await Expect(contaListarPage.LinhasAbertas).ToHaveCountAsync(2);
+
+        // Act - verificar a mesa ocupada antes e depois da primeira conta
+        await mesaListarPage.IrParaAsync();
+        await Expect(mesaListarPage.StatusDaMesa(1)).ToHaveTextAsync("Ocupada");
+
+        await contaListarPage.IrParaAsync();
+        await contaListarPage.FecharAsync("Carlos");
+        await Page.GetByRole(
+            AriaRole.Button,
+            new() { Name = "Confirmar Fechamento", Exact = true }
+        ).ClickAsync();
+
+        await mesaListarPage.IrParaAsync();
+        await Expect(mesaListarPage.StatusDaMesa(1)).ToHaveTextAsync("Ocupada");
+
+        // Act - fechar a última conta
+        await contaListarPage.IrParaAsync();
+        await contaListarPage.FecharAsync("Maria");
+        await Page.GetByRole(
+            AriaRole.Button,
+            new() { Name = "Confirmar Fechamento", Exact = true }
+        ).ClickAsync();
+
+        // Assert
+        await mesaListarPage.IrParaAsync();
+        await Expect(mesaListarPage.StatusDaMesa(1)).ToHaveTextAsync("Livre");
+    }
+
+    [TestMethod]
     public async Task Deve_AcessarDetalhes_DeContaAberta()
     {
         // Arrange

@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore ControleDeBar.slnx
+
+      - name: Build Release
+        run: dotnet build ControleDeBar.slnx --no-restore --configuration Release
+
+      - name: Install Playwright browsers
+        shell: pwsh
+        run: >-
+          ./tests/ControleDeBar.Testes.E2E/bin/Release/net10.0/playwright.ps1
+          install --with-deps chromium
+
+      - name: Unit tests and coverage
+        run: >-
+          dotnet test
+          tests/ControleDeBar.Testes.Unidade/ControleDeBar.Testes.Unidade.csproj
+          --no-build
+          --configuration Release
+          --logger "trx;LogFileName=unit-tests.trx"
+          --results-directory TestResults/Unit
+          --collect:"XPlat Code Coverage"
+
+      - name: Integration tests
+        run: >-
+          dotnet test
+          tests/ControleDeBar.Testes.Integracao/ControleDeBar.Testes.Integracao.csproj
+          --no-build
+          --configuration Release
+          --logger "trx;LogFileName=integration-tests.trx"
+          --results-directory TestResults/Integration
+
+      - name: E2E tests
+        run: >-
+          dotnet test
+          tests/ControleDeBar.Testes.E2E/ControleDeBar.Testes.E2E.csproj
+          --no-build
+          --configuration Release
+          --logger "trx;LogFileName=e2e-tests.trx"
+          --results-directory TestResults/E2E
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults
+          if-no-files-found: warn
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: TestResults/Unit/**/coverage.cobertura.xml
+          if-no-files-found: warn

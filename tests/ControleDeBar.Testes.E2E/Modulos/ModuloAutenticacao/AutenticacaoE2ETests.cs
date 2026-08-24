@@ -1,4 +1,6 @@
 using ControleDeBar.Testes.E2E.Compartilhado;
+using ControleDeBar.Testes.E2E.Modulos.ModuloMesa;
+using Microsoft.Playwright;
 
 namespace ControleDeBar.Testes.E2E.Modulos.ModuloAutenticacao;
 
@@ -99,6 +101,30 @@ public sealed class AutenticacaoE2ETests : E2ETestsBase
 
         // Assert
         await Expect(Page).ToHaveURLAsync(entrarPage.Url);
+        await Expect(entrarPage.Titulo).ToBeVisibleAsync();
+    }
+
+    [TestMethod]
+    public async Task Deve_ExigirAutenticacao_AposLogout_AoAcessarRotaProtegida()
+    {
+        // Arrange
+        const string email = "logout.rota.protegida@teste.local";
+
+        await RegistrarEEntrarAsync(email, SenhaValida);
+        MesaListarPage mesaListarPage = new(Page, UrlBase);
+        EntrarPage entrarPage = new(Page, UrlBase);
+
+        await mesaListarPage.IrParaAsync();
+        await Expect(mesaListarPage.Titulo).ToBeVisibleAsync();
+
+        // Act
+        await entrarPage.SairAsync(email);
+        await Page.GotoAsync(mesaListarPage.Url);
+
+        // Assert
+        await Expect(Page).ToHaveURLAsync(new System.Text.RegularExpressions.Regex(
+            @".*/Autenticacao/Entrar.*"
+        ));
         await Expect(entrarPage.Titulo).ToBeVisibleAsync();
     }
 
