@@ -22,10 +22,10 @@ public record ListagemContasViewModel(
 public class AbrirContaViewModel
 {
     [Required(ErrorMessage = "O campo \"Mesa\" é obrigatório.")]
-    public Guid MesaId { get; set; }
+    public Guid? MesaId { get; set; }
 
     [Required(ErrorMessage = "O campo \"Garçom\" é obrigatório.")]
-    public Guid GarcomId { get; set; }
+    public Guid? GarcomId { get; set; }
 
     [Required(ErrorMessage = "O campo \"Nome do cliente\" é obrigatório.")]
     public string NomeCliente { get; set; } = string.Empty;

@@ -77,27 +77,51 @@ public class ServicoConta(
 
     public List<ListarContaDto> SelecionarAbertas()
     {
+        Dictionary<Guid, Mesa> mesas = repositorioMesa
+            .SelecionarTodos()
+            .ToDictionary(m => m.Id);
+
+        Dictionary<Guid, Garcom> garcons = repositorioGarcom
+            .SelecionarTodos()
+            .ToDictionary(g => g.Id);
+
         return repositorioConta
             .SelecionarTodos()
             .Where(c => c.Status == StatusConta.Aberta)
-            .Select(MapearParaListagem)
+            .Select(c => MapearParaListagem(c, mesas, garcons))
             .ToList();
     }
 
     public List<ListarContaDto> SelecionarFechadas()
     {
+        Dictionary<Guid, Mesa> mesas = repositorioMesa
+            .SelecionarTodos()
+            .ToDictionary(m => m.Id);
+
+        Dictionary<Guid, Garcom> garcons = repositorioGarcom
+            .SelecionarTodos()
+            .ToDictionary(g => g.Id);
+
         return repositorioConta
             .SelecionarTodos()
             .Where(c => c.Status == StatusConta.Fechada)
-            .Select(MapearParaListagem)
+            .Select(c => MapearParaListagem(c, mesas, garcons))
             .ToList();
     }
 
     public List<ListarContaDto> SelecionarTodos()
     {
+        Dictionary<Guid, Mesa> mesas = repositorioMesa
+            .SelecionarTodos()
+            .ToDictionary(m => m.Id);
+
+        Dictionary<Guid, Garcom> garcons = repositorioGarcom
+            .SelecionarTodos()
+            .ToDictionary(g => g.Id);
+
         return repositorioConta
             .SelecionarTodos()
-            .Select(MapearParaListagem)
+            .Select(c => MapearParaListagem(c, mesas, garcons))
             .ToList();
     }
 
@@ -129,10 +153,19 @@ public class ServicoConta(
         return Result.Ok(dto);
     }
 
-    private ListarContaDto MapearParaListagem(Conta conta)
+    private static ListarContaDto MapearParaListagem(
+        Conta conta,
+        Dictionary<Guid, Mesa> mesas,
+        Dictionary<Guid, Garcom> garcons
+    )
     {
-        Mesa? mesa = repositorioMesa.SelecionarPorId(conta.MesaId);
-        Garcom? garcom = repositorioGarcom.SelecionarPorId(conta.GarcomId);
+        Mesa? mesa = mesas.TryGetValue(conta.MesaId, out Mesa? mesaEncontrada)
+            ? mesaEncontrada
+            : null;
+
+        Garcom? garcom = garcons.TryGetValue(conta.GarcomId, out Garcom? garcomEncontrado)
+            ? garcomEncontrado
+            : null;
 
         return new ListarContaDto(
             conta.Id,
