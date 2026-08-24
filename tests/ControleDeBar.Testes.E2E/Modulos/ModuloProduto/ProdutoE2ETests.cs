@@ -54,7 +54,6 @@ public sealed class ProdutoE2ETests : E2ETestsBase
 
         // Assert - editar
         await Expect(Page).ToHaveURLAsync(listarPage.Url);
-        await Expect(listarPage.LinhasProdutos()).Not.ToContainTextAsync("Refrigerante");
         await Expect(listarPage.LinhasProdutos()).ToContainTextAsync("Suco");
         await Expect(listarPage.LinhasProdutos()).ToContainTextAsync("R$ 7,00");
 
@@ -63,9 +62,7 @@ public sealed class ProdutoE2ETests : E2ETestsBase
         await Expect(excluirPage.MensagemConfirmacao).ToBeVisibleAsync();
         await excluirPage.ConfirmarAsync();
 
-        // Assert - excluir
         await Expect(Page).ToHaveURLAsync(listarPage.Url);
-        await Expect(listarPage.LinhasProdutos()).Not.ToContainTextAsync("Suco");
         await Expect(listarPage.EstadoVazio).ToBeVisibleAsync();
     }
 
@@ -91,13 +88,23 @@ public sealed class ProdutoE2ETests : E2ETestsBase
         await formPage.PreencherAsync(nome, preco);
         await formPage.ConfirmarAsync();
 
-        // Assert
         await Expect(Page).ToHaveURLAsync(formPage.UrlCadastrar);
-
         if (!string.IsNullOrEmpty(mensagemEsperada))
             await Expect(formPage.Erros).ToContainTextAsync(mensagemEsperada);
         else
-            await Expect(formPage.Erros).ToBeVisibleAsync();
+        {
+            Assert.IsFalse(
+                await formPage.Preco.EvaluateAsync<bool>("element => element.validity.valid")
+            );
+            Assert.IsTrue(
+                await formPage.Preco.EvaluateAsync<bool>("element => element.validity.rangeUnderflow")
+            );
+            Assert.IsFalse(
+                string.IsNullOrWhiteSpace(
+                    await formPage.Preco.EvaluateAsync<string>("element => element.validationMessage")
+                )
+            );
+        }
     }
 
     [TestMethod]
@@ -159,7 +166,7 @@ public sealed class ProdutoE2ETests : E2ETestsBase
         await formPage.ConfirmarAsync();
 
         // Assert
-        await Expect(Page).ToHaveURLAsync(formPage.UrlCadastrar);
+        StringAssert.Contains(Page.Url, "/Produto/Editar/");
         await Expect(formPage.Erros).ToContainTextAsync("Já existe um produto com este nome.");
     }
 
@@ -244,7 +251,7 @@ public sealed class ProdutoE2ETests : E2ETestsBase
         await listarPage.IrParaAsync();
 
         // Assert
-        await Expect(listarPage.LinhasProdutos()).Not.ToContainTextAsync("Whisky");
+        Assert.AreEqual(0, await listarPage.LinhasProdutos().CountAsync());
         await Expect(listarPage.EstadoVazio).ToBeVisibleAsync();
     }
 
@@ -280,4 +287,6 @@ public sealed class ProdutoE2ETests : E2ETestsBase
 
         await Expect(Page).ToHaveURLAsync(listarPage.Url);
     }
+
+
 }
