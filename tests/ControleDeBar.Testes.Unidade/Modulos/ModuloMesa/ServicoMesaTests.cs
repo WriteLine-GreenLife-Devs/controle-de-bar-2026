@@ -1,5 +1,6 @@
 using ControleDeBar.Aplicacao.Modulos.ModuloMesa;
 using ControleDeBar.Aplicacao.Modulos.ModuloProduto;
+using ControleDeBar.Dominio.Modulos.ModuloConta;
 using ControleDeBar.Dominio.Modulos.ModuloMesa;
 using FluentResults;
 using Moq;
@@ -10,13 +11,18 @@ namespace ControleDeBar.Testes.Unidade.Modulos.ModuloMesa;
 public sealed class ServicoMesaTests
 {
     private Mock<IRepositorioMesa> repositorioMesaMock = null!;
+    private Mock<IRepositorioConta> repositorioContaMock = null!;
     private ServicoMesa servicoMesa = null!;
 
     [TestInitialize]
     public void Inicializar()
     {
         repositorioMesaMock = new Mock<IRepositorioMesa>();
-        servicoMesa = new ServicoMesa(repositorioMesaMock.Object);
+        repositorioContaMock = new Mock<IRepositorioConta>();
+        servicoMesa = new ServicoMesa(
+            repositorioMesaMock.Object,
+            repositorioContaMock.Object
+        );
     }
 
     [TestMethod]
@@ -178,6 +184,7 @@ public sealed class ServicoMesaTests
         Mesa mesa = new(1, 4) { Id = id };
 
         repositorioMesaMock.Setup(r => r.SelecionarPorId(id)).Returns(mesa);
+        repositorioContaMock.Setup(r => r.SelecionarTodos()).Returns([]);
 
         // Act
         Result resultado = servicoMesa.Excluir(id);
@@ -201,6 +208,60 @@ public sealed class ServicoMesaTests
         // Assert
         Assert.IsTrue(resultado.IsFailed);
         Assert.AreEqual("Mesa não encontrada.", resultado.Errors[0].Message);
+        repositorioMesaMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Deve_RejeitarExclusao_DeMesaComContaAberta()
+    {
+        // Arrange
+        Guid id = Guid.CreateVersion7();
+        Mesa mesa = new(1, 4) { Id = id };
+        Conta conta = new(Guid.CreateVersion7(), Guid.CreateVersion7(), "Carlos")
+        {
+            MesaId = id,
+            Status = StatusConta.Aberta
+        };
+
+        repositorioMesaMock.Setup(r => r.SelecionarPorId(id)).Returns(mesa);
+        repositorioContaMock.Setup(r => r.SelecionarTodos()).Returns([conta]);
+
+        // Act
+        Result resultado = servicoMesa.Excluir(id);
+
+        // Assert
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.AreEqual(
+            "Não é possível excluir esta mesa, pois ela está vinculada a uma conta.",
+            resultado.Errors[0].Message
+        );
+        repositorioMesaMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Deve_RejeitarExclusao_DeMesaComContaFechada()
+    {
+        // Arrange
+        Guid id = Guid.CreateVersion7();
+        Mesa mesa = new(1, 4) { Id = id };
+        Conta conta = new(Guid.CreateVersion7(), Guid.CreateVersion7(), "Carlos")
+        {
+            MesaId = id
+        };
+        conta.Fechar();
+
+        repositorioMesaMock.Setup(r => r.SelecionarPorId(id)).Returns(mesa);
+        repositorioContaMock.Setup(r => r.SelecionarTodos()).Returns([conta]);
+
+        // Act
+        Result resultado = servicoMesa.Excluir(id);
+
+        // Assert
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.AreEqual(
+            "Não é possível excluir esta mesa, pois ela está vinculada a uma conta.",
+            resultado.Errors[0].Message
+        );
         repositorioMesaMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
     }
 

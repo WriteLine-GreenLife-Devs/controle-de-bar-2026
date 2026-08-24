@@ -129,6 +129,35 @@ public sealed class ServicoPedidoTests
     }
 
     [TestMethod]
+    public void Deve_RejeitarAdicao_ComQuantidadeZero()
+    {
+        // Arrange
+        Guid contaId = Guid.CreateVersion7();
+        Guid produtoId = Guid.CreateVersion7();
+        Conta conta = new(Guid.CreateVersion7(), Guid.CreateVersion7(), "Carlos")
+        {
+            Id = contaId,
+            Status = StatusConta.Aberta
+        };
+        Produto produto = new("Cerveja", 8.50m) { Id = produtoId };
+        AdicionarPedidoDto dto = new(contaId, produtoId, 0);
+
+        repositorioContaMock.Setup(r => r.SelecionarPorId(contaId)).Returns(conta);
+        repositorioProdutoMock.Setup(r => r.SelecionarPorId(produtoId)).Returns(produto);
+
+        // Act
+        Result resultado = servicoPedido.Adicionar(dto);
+
+        // Assert
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.AreEqual(
+            "O campo \"Quantidade\" deve ser maior que zero.",
+            resultado.Errors[0].Message
+        );
+        repositorioPedidoMock.Verify(r => r.Cadastrar(It.IsAny<Pedido>()), Times.Never);
+    }
+
+    [TestMethod]
     public void Deve_CriarSnapshot_ComNomeProduto()
     {
         // Arrange

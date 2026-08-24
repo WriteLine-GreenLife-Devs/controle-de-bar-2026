@@ -1,4 +1,5 @@
 using ControleDeBar.Aplicacao.Modulos.ModuloGarcom;
+using ControleDeBar.Dominio.Modulos.ModuloConta;
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
 using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using FluentResults;
@@ -10,13 +11,18 @@ namespace ControleDeBar.Testes.Unidade.Modulos.ModuloGarcom;
 public sealed class ServicoGarcomTests
 {
     private Mock<IRepositorioGarcom> repositorioGarcomMock = null!;
+    private Mock<IRepositorioConta> repositorioContaMock = null!;
     private ServicoGarcom servicoGarcom = null!;
 
     [TestInitialize]
     public void Inicializar()
     {
         repositorioGarcomMock = new Mock<IRepositorioGarcom>();
-        servicoGarcom = new ServicoGarcom(repositorioGarcomMock.Object);
+        repositorioContaMock = new Mock<IRepositorioConta>();
+        servicoGarcom = new ServicoGarcom(
+            repositorioGarcomMock.Object,
+            repositorioContaMock.Object
+        );
     }
 
     [TestMethod]
@@ -195,6 +201,7 @@ public sealed class ServicoGarcomTests
         Garcom garcom = new("Marcos") { Id = id };
 
         repositorioGarcomMock.Setup(r => r.SelecionarPorId(id)).Returns(garcom);
+        repositorioContaMock.Setup(r => r.SelecionarTodos()).Returns([]);
 
         // Act
         Result resultado = servicoGarcom.Excluir(id);
@@ -218,6 +225,56 @@ public sealed class ServicoGarcomTests
         // Assert
         Assert.IsTrue(resultado.IsFailed);
         Assert.AreEqual("Garçom não encontrado.", resultado.Errors[0].Message);
+        repositorioGarcomMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Deve_RejeitarExclusao_DeGarcomComContaAberta()
+    {
+        // Arrange
+        Guid id = Guid.CreateVersion7();
+        Garcom garcom = new("Marcos") { Id = id };
+        Conta conta = new(Guid.CreateVersion7(), id, "Carlos")
+        {
+            Status = StatusConta.Aberta
+        };
+
+        repositorioGarcomMock.Setup(r => r.SelecionarPorId(id)).Returns(garcom);
+        repositorioContaMock.Setup(r => r.SelecionarTodos()).Returns([conta]);
+
+        // Act
+        Result resultado = servicoGarcom.Excluir(id);
+
+        // Assert
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.AreEqual(
+            "Não é possível excluir este garçom, pois ele está vinculado a uma conta.",
+            resultado.Errors[0].Message
+        );
+        repositorioGarcomMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Deve_RejeitarExclusao_DeGarcomComContaFechada()
+    {
+        // Arrange
+        Guid id = Guid.CreateVersion7();
+        Garcom garcom = new("Marcos") { Id = id };
+        Conta conta = new(Guid.CreateVersion7(), id, "Carlos");
+        conta.Fechar();
+
+        repositorioGarcomMock.Setup(r => r.SelecionarPorId(id)).Returns(garcom);
+        repositorioContaMock.Setup(r => r.SelecionarTodos()).Returns([conta]);
+
+        // Act
+        Result resultado = servicoGarcom.Excluir(id);
+
+        // Assert
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.AreEqual(
+            "Não é possível excluir este garçom, pois ele está vinculado a uma conta.",
+            resultado.Errors[0].Message
+        );
         repositorioGarcomMock.Verify(r => r.Excluir(It.IsAny<Guid>()), Times.Never);
     }
 

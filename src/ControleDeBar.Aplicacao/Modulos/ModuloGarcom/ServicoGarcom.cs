@@ -1,4 +1,5 @@
 using ControleDeBar.Aplicacao.Compartilhado;
+using ControleDeBar.Dominio.Modulos.ModuloConta;
 using ControleDeBar.Dominio.Modulos.ModuloGarcom;
 using ControleDeBar.Dominio.Modulos.ModuloProduto;
 using FluentResults;
@@ -6,7 +7,8 @@ using FluentResults;
 namespace ControleDeBar.Aplicacao.Modulos.ModuloGarcom;
 
 public class ServicoGarcom(
-    IRepositorioGarcom repositorioGarcom
+    IRepositorioGarcom repositorioGarcom,
+    IRepositorioConta repositorioConta
 ) : ServicoBase<Garcom>
 {
     public Result Cadastrar(CadastrarGarcomDto dto)
@@ -56,6 +58,16 @@ public class ServicoGarcom(
 
         if (garcom is null)
             return Falha(string.Empty, "Garçom não encontrado.");
+
+        bool garcomPossuiContas = repositorioConta
+            .SelecionarTodos()
+            .Any(conta => conta.GarcomId == id);
+
+        if (garcomPossuiContas)
+            return Falha(
+                string.Empty,
+                "Não é possível excluir este garçom, pois ele está vinculado a uma conta."
+            );
 
         repositorioGarcom.Excluir(id);
 
